@@ -57,7 +57,7 @@ comando_e leggiComando(){
         else if(strcmp(input, "ritardo")==0){
             comando = r_ritardo;
         }
-        else if(strcmp(input, "pippo")==0){
+        else if(strcmp(input, "ritardo_tot")==0){
             comando = r_ritardo_tot;
         }
         else if(strcmp(input, "fine")==0){
