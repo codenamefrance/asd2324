@@ -1,0 +1,9 @@
+In questo laboratorio ho migliorato la gestione di strutture dati basate su puntatori/vettori di puntatori/matrici di puntatori.
+
+In particolare, ho iniziato ad apprezzare l'importanza del puntatore come tipo (con un puntatore, ad esempio, un'operazione quale copiare un vettore di struct all'interno di un altro
+diventa banale, al contrario di doverlo fare sulla struttura dati originale, copiando ciascuna chiave a mano).
+
+L'esercizio 4 sarebbe stato sicuramente più compatto utilizzando l'allocazione dinamica, argomento che tuttavia non era previsto nel Laboratorio. 
+Sicuramente nel laboratorio successivo verrà proposto un adattamento in questo senso.
+
+
