@@ -6,4 +6,6 @@ diventa banale, al contrario di doverlo fare sulla struttura dati originale, cop
 L'esercizio 4 sarebbe stato sicuramente più compatto utilizzando l'allocazione dinamica, argomento che tuttavia non era previsto nel Laboratorio. 
 Sicuramente nel laboratorio successivo verrà proposto un adattamento in questo senso.
 
+Ho inoltre imparato ad apprezzare meglio le enum per la gestione degli indici di un vettore.
 
+Ho applicato il concetto di puntatore a funzione.
