@@ -41,9 +41,9 @@ comando_e leggiComando(){
     comando_e comando;
 
     puts("Please, input: \n");
-    scanf("%s", input);
     do{
         valido=1;
+        scanf("%s", input);
 
         if(strcmp(input, "date")==0){
             comando = r_date;
@@ -65,9 +65,9 @@ comando_e leggiComando(){
         }
         else{
             valido=0;
-            printf("Comando non valido.");
+            printf("Comando non valido.\n");
         }
-    }while (!valido);
+    }while (valido==0);
 
     return comando;
 };

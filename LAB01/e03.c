@@ -33,6 +33,7 @@ void printLog(log_s *log);
 void fprintLogs(FILE *fout, log_s **logs, int size);
 
 int leggiFile(char *filename, log_s *table);
+void selezionaDati(log_s **vp, int size, comando_e cmd);
 
 void insertionSort(log_s **vp, int size, int (*cmpFz)(log_s *s1, log_s *s2));
 void searchLogs(log_s **vp, int size);
@@ -46,19 +47,41 @@ int cmpCode(log_s *s1, log_s *s2);
 int cmpTerminal(log_s *s1, log_s *s2);
 int cmpDestination(log_s *s1, log_s *s2);
 
+
+
+/* Main run */
+
+int main(){
+    log_s logs[1000];
+    log_s *plogs[1000];
+    int size;
+    comando_e cmd;
+
+    size = leggiFile(FILENAME, logs);
+    for(int i=0; i<size; i++){
+        plogs[i]=&logs[i];
+    }
+    do{
+    cmd = leggiComando();
+    selezionaDati(plogs, size, cmd);
+    }while(cmd!=r_fine);
+}
+
+
+
 /*
     Functions' codes
 */
 
 comando_e leggiComando(){
     char input[10];
-    int valido=1;
+    int valido;
     comando_e comando;
 
     puts("Inserire il comando: ");
     do{
-        scanf("%s", input);
         valido=1;
+        scanf("%s", input);
 
         if(strcmp(input, "data")==0){
             comando = r_data;
@@ -82,10 +105,10 @@ comando_e leggiComando(){
             comando = r_fine;
         }
         else{
-            valido=0;
             printf("Comando non valido.\n");
+            valido=0;
         }
-    }while (!valido);
+    }while(!valido);
 
     return comando;
 }
@@ -257,20 +280,4 @@ void selezionaDati(log_s **vp, int size, comando_e cmd){
             break;
     }
 
-}
-
-int main(){
-    log_s logs[1000];
-    log_s *plogs[1000];
-    int size;
-    comando_e cmd;
-
-    size = leggiFile(FILENAME, logs);
-    for(int i=0; i<size; i++){
-        plogs[i]=&logs[i];
-    }
-    do{
-    cmd = leggiComando();
-    selezionaDati(plogs, size, cmd);
-    }while(cmd!=r_fine);
 }

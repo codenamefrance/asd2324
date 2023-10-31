@@ -42,6 +42,7 @@ void printLog(log_s *log);
 void fprintLogs(FILE *fout, log_s **logs, int size);
 
 int leggiFile(char *filename, log_s *table);
+void selezionaDati(log_s ***allorders, int size, comando_e cmd);
 
 void insertionSort(log_s **src, int size, int (*cmpFz)(log_s *s1, log_s *s2));
 void searchLogs(log_s **vp, int size);
@@ -58,6 +59,48 @@ int cmpDestination(log_s *s1, log_s *s2);
 void log_s_cpy(log_s **src, int size, log_s **dest);
 
 void orderEverything(log_s ***dest, log_s **src, int size);
+
+// Main run
+/*
+    Main run
+*/
+int main(){
+    log_s logs[1000];
+    log_s *plogs[1000];
+    int size;
+    comando_e cmd;
+
+    /* Multi order vectors allocation*/
+    log_s *ordOriginal[MAXLEN];
+    log_s *ordByDate[MAXLEN];
+    log_s *ordByCode[MAXLEN];
+    log_s *ordByTerm[MAXLEN];
+    log_s *ordByArriv[MAXLEN];
+    
+    log_s **ordAll[MAXORD];
+
+    ordAll[o_originale] = ordOriginal;
+    ordAll[o_data] = ordByDate;
+    ordAll[o_partenza] = ordByTerm;
+    ordAll[o_destinazione] = ordByArriv;
+    ordAll[o_codice] = ordByCode;
+
+    size = leggiFile(FILENAME, logs);
+    for(int i=0; i<size; i++){
+        plogs[i]=&logs[i];
+    }
+
+    orderEverything(ordAll, plogs, size);
+
+    do{
+    cmd = leggiComando();
+    selezionaDati(ordAll, size, cmd);
+    }while(cmd!=r_fine);
+}
+
+
+
+
 /*
     Functions' codes
 */
@@ -281,41 +324,6 @@ void selezionaDati(log_s ***allorders, int size, comando_e cmd){
     }
 
 }
-/*
-    Main run
-*/
-int main(){
-    log_s logs[1000];
-    log_s *plogs[1000];
-    int size;
-    comando_e cmd;
 
-    /* Multi order vectors allocation*/
-    log_s *ordOriginal[MAXLEN];
-    log_s *ordByDate[MAXLEN];
-    log_s *ordByCode[MAXLEN];
-    log_s *ordByTerm[MAXLEN];
-    log_s *ordByArriv[MAXLEN];
-    
-    log_s **ordAll[MAXORD];
-
-    ordAll[o_originale] = ordOriginal;
-    ordAll[o_data] = ordByDate;
-    ordAll[o_partenza] = ordByTerm;
-    ordAll[o_destinazione] = ordByArriv;
-    ordAll[o_codice] = ordByCode;
-
-    size = leggiFile(FILENAME, logs);
-    for(int i=0; i<size; i++){
-        plogs[i]=&logs[i];
-    }
-
-    orderEverything(ordAll, plogs, size);
-
-    do{
-    cmd = leggiComando();
-    selezionaDati(ordAll, size, cmd);
-    }while(cmd!=r_fine);
-}
 
 
