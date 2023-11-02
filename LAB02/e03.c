@@ -37,6 +37,9 @@ typedef struct{
  */
 comando_e leggiComando();
 
+void loop(char *filename);
+
+
 void printLogs(log_s **logs, int size);
 void printLog(log_s *log);
 void fprintLogs(FILE *fout, log_s **logs, int size);
@@ -48,7 +51,6 @@ void searchLogs(log_s **vp, int size);
 
 void linearSearch(log_s **vp, int size, char *src);
 void binarySearch(log_s **vp, int size, char *src);
-//int isOrderedByTerminal(log_s **vp, int size);
 
 int cmpDate(log_s *s1, log_s *s2);
 int cmpCode(log_s *s1, log_s *s2);
@@ -57,7 +59,50 @@ int cmpDestination(log_s *s1, log_s *s2);
 
 void log_s_cpy(log_s **src, int size, log_s **dest);
 
-void orderEverything(log_s ***dest, log_s **src, int size);
+/*
+    Main run
+*/
+int main(){
+
+    char str[30];
+
+    while(1){
+    printf("Input filename or type exit: "); scanf("%s", str);
+    if(strcmp(str, "exit")==0) 
+        return 0;
+    loop(str);
+    }
+}
+
+void loop(char *filename){
+    log_s *logs;
+    log_s **plogs;
+    int size;
+    comando_e cmd;
+
+    log_s **all_orders[MAXORD];
+    size = leggiFile(filename, &logs);
+
+    plogs = (log_s **)malloc(size*sizeof(log_s *));
+    for(int j=0; j<MAXORD; j++){
+        all_orders[j] = (log_s **)malloc(size*sizeof(log_s *));
+    }
+
+    for(int i=0; i<size; i++){
+        plogs[i]=&logs[i];
+        all_orders[o_originale][i] = plogs[i];
+    }
+
+    do{
+    cmd = leggiComando();
+    selezionaDati(plogs, all_orders, size, cmd);
+    }while(cmd!=r_fine);
+
+    freeEverything(logs, plogs, size, all_orders);
+
+    return;
+}
+
 /*
     Functions' codes
 */
@@ -67,27 +112,7 @@ void log_s_cpy(log_s **src, int size, log_s **dest){
     }
 }
 
-void orderEverything(log_s ***dest, log_s **src, int size){
 
-    dest[o_originale] = (log_s**)malloc(size*sizeof(log_s**));
-    log_s_cpy(src, size, dest[o_originale]);
-    //crea funzione orderAndCopy(...)
-    insertionSort(src, size, cmpDestination);
-    dest[o_destinazione] = (log_s**)malloc(size*sizeof(log_s**));
-    log_s_cpy(src, size, dest[o_destinazione]); // copio lo stato di src in dest.arrivo
-    
-    insertionSort(src, size, cmpCode);
-    dest[o_codice] = (log_s**)malloc(size*sizeof(log_s**));
-    log_s_cpy(src, size, dest[o_codice]);
-
-    insertionSort(src, size, cmpTerminal);
-    dest[o_partenza] = (log_s**)malloc(size*sizeof(log_s**));
-    log_s_cpy(src, size, dest[o_partenza]);
-
-    insertionSort(src, size, cmpDate);
-    dest[o_data] = (log_s**)malloc(size*sizeof(log_s**));
-    log_s_cpy(src, size, dest[o_data]);
-}
 
 comando_e leggiComando(){
     char input[10];
@@ -176,7 +201,7 @@ int leggiFile(char *filename, log_s **table){
 
     fscanf(fin, "%d", &size);
 
-    table_a = (log_s *)malloc(size*sizeof(log_s *));
+    table_a = (log_s *)malloc(size*sizeof(log_s));
     //aggiungere controllo memoria
 
     for(i=0; i<size; i++){
@@ -222,13 +247,6 @@ void searchLogs(log_s **vp, int size){
     binarySearch(vp, size, src);
 }
 
-/*int isOrderedByTerminal(log_s **vp, int size){
-    for(int i=0; i<size-1; i++){
-        if(cmpTerminal(vp[i], vp[i+1])>0)
-            return 0;
-    }
-    return 1;
-}*/
 void linearSearch(log_s **vp, int size, char *src){
     for(int i=0; i<size; i++){
         if(strncmp((vp[i]->partenza), src, strlen(src))==0) printLog(vp[i]);
@@ -264,26 +282,34 @@ void insertionSort(log_s **src, int size, int (*cmpFz)(log_s *s1, log_s *s2)){
         src[j+1]=ps;
     }
 }
-void selezionaDati(log_s ***allorders, int size, comando_e cmd){
+void orderAndCopy(log_s **src, log_s **dest, int size, int (*cmpFz)(log_s *s1, log_s *s2)){
+    insertionSort(src, size, cmpFz);
+    log_s_cpy(src, size, dest);
+    printLogs(dest, size);
+    return;
+}
+
+
+void selezionaDati(log_s **vp, log_s ***all_orders, int size, comando_e cmd){
     
     switch(cmd){
         case r_data:
-            printLogs(allorders[o_data], size);
+            orderAndCopy(vp, all_orders[o_data], size, cmpDate);
             break;
         case r_partenza:
-            printLogs(allorders[o_partenza], size);
+            orderAndCopy(vp, all_orders[o_partenza], size, cmpTerminal);
             break;
         case r_destinazione:
-            printLogs(allorders[o_destinazione], size);
+            orderAndCopy(vp, all_orders[o_destinazione], size, cmpDestination);
             break;
         case r_codice:
-            printLogs(allorders[o_codice], size);
+            orderAndCopy(vp, all_orders[o_codice], size, cmpCode);
             break;
         case r_stampa:
-            printLogs(allorders[o_originale], size);
+            printLogs(all_orders[o_originale], size);
             break;
         case r_ricerca:
-            searchLogs(allorders[o_partenza], size);
+            searchLogs(vp, size);
             break;
         case r_fine:
             printf("Uscita...\n");
@@ -292,53 +318,17 @@ void selezionaDati(log_s ***allorders, int size, comando_e cmd){
 
 }
 
+
+
 void freeEverything(log_s *logs, log_s **plogs, int size, log_s ***allords){
     free(logs);
     free(plogs);
     for(int i=0; i<MAXORD; i++){
         free(allords[i]);
     }
+    printf("DEBUG: Dinamic memory correctly freed.\n");
     return;
 }
 
-void loop(char *filename);
-/*
-    Main run
-*/
-int main(){
-    char str[30];
-    do{
-    printf("Input filename or type exit: "); scanf("%s", str);
-    loop(str);
-    }while(strcmp(str, "exit")!=0);
-
-    return 0;
-}
-
-void loop(char *filename){
-    log_s *logs;
-    log_s **plogs;
-    int size;
-    comando_e cmd;
-
-    log_s **all_orders[MAXORD];
-    size = leggiFile(filename, &logs);
-
-    plogs = (log_s **)malloc(size*sizeof(log_s **));
-    for(int i=0; i<size; i++){
-        plogs[i]=&logs[i];
-    }
-    printLogs(plogs, size);
-
-    orderEverything(all_orders, plogs, size);
-    do{ //aggiustare per skippare subito con fine
-    cmd = leggiComando();
-    selezionaDati(all_orders, size, cmd);
-    }while(cmd!=r_fine);
-
-    freeEverything(logs, plogs, size, all_orders);
-
-    return;
-}
 
 

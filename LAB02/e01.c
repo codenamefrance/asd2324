@@ -1,5 +1,12 @@
 #include <stdio.h>
 
+int isOdd(int n);
+int long gcd(int a, int b);
+
+int main(){
+    printf("%d\n", gcd(22,11)); 
+}
+
 int isOdd(int n){
     if(n%2==0) return 1;
     return 0;
@@ -18,10 +25,4 @@ int long gcd(int a, int b){
         return gcd(a/2, b);
     if(!isOdd(a) && !isOdd(b)) 
         return gcd((a-b)/2, b);
-
 }
-
-int main(){
-    printf("%d\n", gcd(22,11)); //11
-}
-
