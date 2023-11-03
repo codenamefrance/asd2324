@@ -1,5 +1,13 @@
 #include <stdio.h>
 
+int main(){
+    int v[5]={3,3,3,4,5};
+    int N=5;
+
+    int x=majority(v, N);
+    printf("%d\n", x);
+
+}
 
 int majority(int *a, int N){
     if(N==1) return a[0];
@@ -34,12 +42,3 @@ int majority(int *a, int N){
 
 }
 
-
-int main(){
-    int v[5]={3,3,3,4,5};
-    int N=5;
-
-    int x=majority(v, N);
-    printf("%d\n", x);
-
-}
