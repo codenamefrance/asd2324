@@ -1,77 +1,48 @@
-/* IN-ORDER VISIT
+/* n tipi di monete -> val[n] = valore di n
+disp[n] = quante monete di tipo n ho
+r resto intero
 
-    2
-   / \
-  1   3
+Calcolare numero di monete minimo per erogare tale resto -> visualizzare la soluzione. (No greedy)
+
+IDEA 1: powerset con disposizioni ripetute -> esco appena ne trovo una
 
 */
 
-
-#include <stdio.h>
-#include <stdlib.h>
-
-typedef struct node* link;
-
-struct node { int item; link left; link right; } ;
-
-link NEW(int chiave, link left, link  right) {
-  link x = malloc(sizeof *x);
-  x->item = chiave; x->left = left; x->right = right;
-  return x;
+void resto(){
+    int k; status=0;
+    int val[] = {1,10,25};
+    int disp[] = {10,3,2};
+    
+    int tmp=0; int r=30;
+        
+        
+    for(k=1; k<n && status==0; k++)
+        powerSet(val, disp, 0, k, sol, &tmp, &status, r);
+    
+    return;
 }
 
-link buildTree(int inorder[], int preorder[], int N);
-link buildR(int inorder[], int preorder[], int l, int r, int *preid);
-int search(int val, int *array, int start, int end);
-void visitTree(link root);
-
-link buildR(int inorder[], int preorder[], int l, int r, int *preid){
-    int m;
-    if(l>r) return NULL;
-    
-    link tRoot = NEW(preorder[(*preid)++], NULL, NULL);
-    
-    if(l==r) return tRoot;
-    
-    m = search(tRoot->item, inorder, l, r);
-    
-    tRoot->left = buildR(inorder, preorder, l, m-1, preid);
-    tRoot->right = buildR(inorder, preorder, m+1, r, preid);
-    
-    
-    return tRoot;    
-}
-
-link buildTree(int inorder[], int preorder[], int N){
-    int preid=0;
-    return buildR(inorder, preorder, 0, N-1, &preid);
-}
-
-
-
-void visitTree(link root){
-    if (root == NULL) return;
-
-    visitTree(root->left);
-    visitTree(root->right);
-    printf("%d ", root->item);
-}
-
-
-int main() {
-    int pre[] = {100, 10, 55, 25, 13, 3, 30, 14, 0, 20, 90};
-    int in[] = {10, 100, 13, 25, 3, 55, 0, 14, 20, 30, 90};
-    link  p = buildTree(in,pre,11);
-
-
-    visitTree(p);
-
-    return 0;
-}
-
-int search(int val, int *array, int start, int end){
+void powerSet(int val[], int mark[], int pos, int k, int sol[], int *tmp, int *status, int r){
     int i;
-    for(i=start; i<=end && array[i]!=val; i++);
-    printf("Found at %d\n", i);
-    return i;
+    
+    if(pos>=k){
+        if(tmp==cnt){
+            printf("HELL YEAH! UTILIZZO UN PO' DI MONETE : %d\n", k);
+            *status = 1
+            return;            
+        }
+    }
+    
+    if((*status) == 1) return;
+    
+    for(i=0; i<n; i++){
+        if(mark[i]!=0 && cnt+val[i]<=r){
+            mark[i]--; 
+            sol[pos] = val[i]; (*tmp) = (*tmp)+val[i];
+            powerSet(val, mark, pos+1, k, sol, tmp, status);
+            mark[i]++; (*tmp) = (*tmp)-val[i];
+        }
+    }
+    return;
 }
+
